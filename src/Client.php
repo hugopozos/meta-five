@@ -649,6 +649,7 @@ class Client
         return true;
     }
 
+    // test
     public function getTradingAccounts($login)
     {
         $accounts = new stdClass;
