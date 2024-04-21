@@ -815,48 +815,23 @@ class Client
 
     public function test2()
     {
-       $this->connect();
-       $request = new CMT5Request();
-       $path = '/api/time/server';
-       $result = $request->Post($path, json_encode([]));
-       return $result;
+        if (!$this->isConnected()) {
+            $conn = $this->connect();
+
+            if ($conn != MTRetCode::MT_RET_OK) {
+                throw new ConnectionException(MTRetCode::GetError($conn));
+            }
+        }
+        return [
+            'status' => 'success',
+            'message' => 'Test',
+            'data' => $conn,
+        ];
     }
 
-    public function authTest($login, $password, $build, $agent)
+    public function authTest()
     {
-        // Iniciar sesión
-        if (!$this->Init($this->server . ":" . $this->port)) {
-            return false;
-        }
-        // Construir la solicitud de autenticación
-        $authUrl = '/api/auth/start?version=' . $build . '&agent=' . $agent . '&login=' . $login . '&type=manager';
-        $authResponse = $this->Get($authUrl);
-        // Verificar la respuesta de autenticación
-        if (!$authResponse) {
-            return false;
-        }
-        $authData = json_decode($authResponse);
-        if ($authData->retcode != 0) {
-            echo 'Auth start error : ' . $authData->retcode;
-            return false;
-        }
-        // Generar respuesta de autenticación
-        $passwordHash = md5(mb_convert_encoding($password, 'utf-16le', 'utf-8')) . 'WebAPI';
-        $srvRandAnswer = md5(md5($passwordHash, true) . hex2bin($authData->srv_rand));
-        $cliRand = bin2hex(random_bytes(16));
-        $authAnswerUrl = '/api/auth/answer?srv_rand_answer=' . $srvRandAnswer . '&cli_rand=' . $cliRand;
-        $authAnswerResponse = $this->Get($authAnswerUrl);
-        // Verificar la respuesta de autenticación final
-        if (!$authAnswerResponse) {
-            return false;
-        }
-        $authAnswerData = json_decode($authAnswerResponse);
-        if ($authAnswerData->retcode != 0) {
-            echo 'Auth answer error : ' . $authAnswerData->retcode;
-            return false;
-        }
-        // La autenticación fue exitosa
-        return true;
+
     }
 
 }
