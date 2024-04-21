@@ -30,9 +30,9 @@ use stdClass;
 
 //+------------------------------------------------------------------+
 //--- web api version
-define("WebAPIVersion", 2980);
+define("WebAPIVersion", 4275);
 //--- web api date
-define("WebAPIDate", "18 June 2021");
+define("WebAPIDate", "20 April 2024");
 
 class Client
 {
@@ -778,14 +778,6 @@ class Client
     {
         $request = new CMT5Request();
 
-        if (!$this->isConnected()) {
-            $conn = $this->connect();
-
-            if ($conn != MTRetCode::MT_RET_OK) {
-                throw new ConnectionException(MTRetCode::GetError($conn));
-            }
-        }
-
         if ($request->Init($this->server . ":" . $this->port) && $request->Auth($this->username, $this->password, WebAPIVersion, "WebManager")) {
 
             $path = '/api/client/add';
@@ -797,6 +789,12 @@ class Client
         } else {
             return "Error: Authentication failed.";
         }
+    }
+
+    public function connection(): bool
+    {
+        $request = new CMT5Request();
+        return $request->Init($this->server . ":" . $this->port) && $request->Auth($this->username, $this->password, WebAPIVersion, "WebManager");
     }
 
 }
