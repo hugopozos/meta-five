@@ -804,11 +804,8 @@ class Client
         }
 
         $request = new CMT5Request();
-        $path = '/api/user/get';
-        $result = $request->Post($path, json_encode([
-            'login' => 1005
-        ]));
-        $request->Shutdown();
+        $path = '/api/time/server';
+        $result = $request->PostTest($path, json_encode([]));
 
         return $result;
     }

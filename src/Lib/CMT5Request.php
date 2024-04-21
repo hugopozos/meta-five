@@ -55,6 +55,25 @@ class CMT5Request
         return ($result);
     }
 
+    public function PostTest($path, $body)
+    {
+        curl_setopt($this->m_curl, CURLOPT_POST, true);
+        curl_setopt($this->m_curl, CURLOPT_URL, 'https://'.$this->m_server.$path);
+        curl_setopt($this->m_curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->m_curl, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($this->m_curl);
+        if ($result == false) {
+            echo 'Curl POST error: '.curl_error($this->m_curl);
+            return (false);
+        }
+        $code = curl_getinfo($this->m_curl, CURLINFO_HTTP_CODE);
+        if ($code != 200) {
+            echo 'Curl POST code: '.$code;
+            return (false);
+        }
+        return ($result);
+    }
+
     public function Auth($login, $password, $build, $agent)
     {
         if ($this->m_curl == null)
