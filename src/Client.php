@@ -649,7 +649,6 @@ class Client
         return true;
     }
 
-    // test
     public function getTradingAccounts($login)
     {
         $accounts = new stdClass;
@@ -769,4 +768,26 @@ class Client
 
         return true;
     }
+
+    /**-----------------------------------------------------
+     * New functions
+     * Web API
+     * _____________________________________________________
+     */
+    public function addClient($data)
+    {
+        $request = new CMT5Request();
+        if ($request->Init($this->server . ":" . $this->port) && $request->Auth($this->username, $this->password, WebAPIVersion, "WebManager")) {
+
+            $path = '/api/client/add';
+            $result = $request->Post($path, json_encode($data));
+
+            $request->Shutdown();
+
+            return $result;
+        } else {
+            return "Error: Authentication failed.";
+        }
+    }
+
 }
