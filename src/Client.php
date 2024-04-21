@@ -777,6 +777,15 @@ class Client
     public function addClient($data)
     {
         $request = new CMT5Request();
+
+        if (!$this->isConnected()) {
+            $conn = $this->connect();
+
+            if ($conn != MTRetCode::MT_RET_OK) {
+                throw new ConnectionException(MTRetCode::GetError($conn));
+            }
+        }
+
         if ($request->Init($this->server . ":" . $this->port) && $request->Auth($this->username, $this->password, WebAPIVersion, "WebManager")) {
 
             $path = '/api/client/add';
