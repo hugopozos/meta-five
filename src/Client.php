@@ -776,25 +776,35 @@ class Client
      */
     public function addClient($data)
     {
+        if (!$this->isConnected()) {
+            $conn = $this->connect();
+
+            if ($conn != MTRetCode::MT_RET_OK) {
+                throw new ConnectionException(MTRetCode::GetError($conn));
+            }
+        }
+
         $request = new CMT5Request();
 
-        if ($request->Init($this->server . ":" . $this->port) && $request->Auth($this->username, $this->password, WebAPIVersion, "WebManager")) {
+        $path = '/api/client/add';
+        $result = $request->Post($path, json_encode($data));
 
-            $path = '/api/client/add';
-            $result = $request->Post($path, json_encode($data));
+        $request->Shutdown();
 
-            $request->Shutdown();
+        return $result;
 
-            return $result;
-        } else {
-            return "Error: Authentication failed.";
-        }
     }
 
-    public function connection(): bool
+    public function connection()
     {
-        $request = new CMT5Request();
-        return $request->Init($this->server . ":" . $this->port) && $request->Auth($this->username, $this->password, WebAPIVersion, "WebManager");
+
+        if (!$this->isConnected()) {
+            $conn = $this->connect();
+
+            if ($conn != MTRetCode::MT_RET_OK) {
+                throw new ConnectionException(MTRetCode::GetError($conn));
+            }
+        }
     }
 
 }
